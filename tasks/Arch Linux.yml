@@ -1,0 +1,34 @@
+## roles/vagrant/tasks/Arch Linux.yml
+## Arch Linux vagrant main file
+## See wiki.archlinux.org/index.php/Vagrant for further information
+# vim:ft=ansible:
+---
+- name: Install official packages
+  package:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - vagrant
+    - ruby
+    - libxml2
+    - libxslt
+    - git
+
+# This will need 'virt' group and eligit users added to it
+- name: Configure PolicyKit for non-Root Access to libvirt Service
+  template:
+    src: 10.virt.rules.j2
+    dest: /etc/polkit-1/rules.d/10.virt.rules
+  notify: polkit restart
+
+- template:
+    src: vagrant-libvirt-install.sh.j2
+    dest: /tmp/vagrant-libvirt-install.sh
+    mode: 0700
+
+- name: Install libvirt plugin
+  command: /tmp/vagrant-libvirt-install.sh
+
+### TODO: export VAGRANT_DEFAULT_PROVIDER=kvm to zshrc
+
+...

@@ -1,0 +1,8 @@
+## roles/vagrant/handlers/main.yml
+# Handlers for the role
+# vim:ft=ansible:
+---
+- name: polkit restart
+  service: name=polkit state=restarted enabled=yes
+...
+
